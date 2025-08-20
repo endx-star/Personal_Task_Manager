@@ -10,6 +10,9 @@ __pycache__/
 *.cover
 *.py,cover
 
+# Environment variables
+.env
+
 # Type checker caches
 .mypy_cache/
 
