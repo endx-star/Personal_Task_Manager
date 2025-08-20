@@ -17,7 +17,7 @@ python3 main.py
 ```
 
 ## Features
-- Add, view, update, and delete tasks
+- Add, view, update, a
 - Persists tasks to `tasks.pkl`
 
 ## Files
