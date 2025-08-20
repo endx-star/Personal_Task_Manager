@@ -1,0 +1,18 @@
+# Common Python ignores
+__pycache__/
+*.py[cod]
+*$py.class
+
+# Test/Coverage caches
+.pytest_cache/
+.coverage
+.coverage.*
+*.cover
+*.py,cover
+
+# Type checker caches
+.mypy_cache/
+
+# Project-specific
+tasks.pkl
+
