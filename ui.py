@@ -1,6 +1,6 @@
 import tkinter as tk
 from tkinter import messagebox, simpledialog
-from task_manager import add_task, view_tasks, update_task, delete_task
+from task_manager import add_task, view_tasks, update_task, delete_task, get_task
 from task import Task
 
 class TaskManagerApp:
@@ -18,6 +18,9 @@ class TaskManagerApp:
 
         self.view_button = tk.Button(root, text="View Tasks", command=self.view_tasks_window)
         self.view_button.pack(pady=5)
+
+        self.view_one_button = tk.Button(root, text="View Task By ID", command=self.view_task_by_id_window)
+        self.view_one_button.pack(pady=5)
 
         self.update_button = tk.Button(root, text="Update Task", command=self.update_task_window)
         self.update_button.pack(pady=5)
@@ -73,6 +76,32 @@ class TaskManagerApp:
         for task in self.tasks:
             task_label = tk.Label(view_window, text=f"ID: {task.id} - {task.title} ({task.status})")
             task_label.pack(anchor="w")
+
+    def view_task_by_id_window(self):
+        """Open a window to view a single task by its ID."""
+        view_one_window = tk.Toplevel(self.root)
+        view_one_window.title("View Task By ID")
+
+        tk.Label(view_one_window, text="Enter Task ID:").pack()
+        id_entry = tk.Entry(view_one_window)
+        id_entry.pack()
+
+        result_label = tk.Label(view_one_window, text="", justify="left")
+        result_label.pack(pady=5, anchor="w")
+
+        def submit():
+            task_id = id_entry.get().strip()
+            if not task_id:
+                messagebox.showerror("Error", "Task ID is required!")
+                return
+            task = get_task(task_id)
+            if task is None:
+                result_label.config(text="Task not found.")
+            else:
+                result_label.config(text=f"ID: {task.id}\n{str(task)}")
+
+        submit_button = tk.Button(view_one_window, text="Submit", command=submit)
+        submit_button.pack(pady=5)
 
     def update_task_window(self):
         """Open a window to update a task."""
