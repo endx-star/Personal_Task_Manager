@@ -52,9 +52,18 @@ def init_db():
             title TEXT NOT NULL,
             description TEXT NOT NULL,
             due_date TEXT NOT NULL,
-            status TEXT NOT NULL
+            status TEXT NOT NULL,
+            category TEXT NOT NULL DEFAULT 'General',
+            priority TEXT NOT NULL DEFAULT 'Normal'
         )
     ''')
+    # Ensure new columns exist even if table was created previously without them
+    try:
+        cursor.execute("ALTER TABLE tasks ADD COLUMN IF NOT EXISTS category TEXT NOT NULL DEFAULT 'General'")
+        cursor.execute("ALTER TABLE tasks ADD COLUMN IF NOT EXISTS priority TEXT NOT NULL DEFAULT 'Normal'")
+    except Exception:
+        # If ALTER fails for any reason, do not crash app initialization
+        pass
     conn.commit()
     conn.close()
 

@@ -1,6 +1,6 @@
 from db import get_connection
 
-def update_task_in_db(task_id, title=None, description=None, due_date=None, status=None):
+def update_task_in_db(task_id, title=None, description=None, due_date=None, status=None, category=None, priority=None):
     """Update a task in the database by ID."""
     conn = get_connection()
     cursor = conn.cursor()
@@ -18,6 +18,12 @@ def update_task_in_db(task_id, title=None, description=None, due_date=None, stat
     if status:
         updates.append("status = %s")
         params.append(status)
+    if category:
+        updates.append("category = %s")
+        params.append(category)
+    if priority:
+        updates.append("priority = %s")
+        params.append(priority)
     if updates:
         set_clause = ", ".join(updates)
         params.append(task_id)

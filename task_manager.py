@@ -5,14 +5,14 @@ from functions.delete_task import delete_task_from_db
 from functions.get_a_task import get_a_task as get_a_task_from_db
 from task import Task
 
-def add_task(title, description, due_date, status="Pending"):
-    add_task_to_db(title, description, due_date, status)
+def add_task(title, description, due_date, status="Pending", category="General", priority="Normal"):
+    add_task_to_db(title, description, due_date, status, category, priority)
 
 def view_tasks():
     return get_all_tasks()
 
-def update_task(task_id, title=None, description=None, due_date=None, status=None):
-    update_task_in_db(task_id, title, description, due_date, status)
+def update_task(task_id, title=None, description=None, due_date=None, status=None, category=None, priority=None):
+    update_task_in_db(task_id, title, description, due_date, status, category, priority)
 
 def delete_task(task_id):
     delete_task_from_db(task_id)

@@ -18,7 +18,7 @@ def get_a_task(task_id):
     conn = get_connection()
     cursor = conn.cursor()
     try:
-        cursor.execute('SELECT id, title, description, due_date, status FROM tasks WHERE id = %s', (task_id,))
+        cursor.execute('SELECT id, title, description, due_date, status, category, priority FROM tasks WHERE id = %s', (task_id,))
     except Exception as exc:
         if (UndefinedTable is not None and isinstance(exc, UndefinedTable)) or (
             getattr(exc, "__class__", None) and exc.__class__.__name__ == "UndefinedTable"
@@ -27,7 +27,7 @@ def get_a_task(task_id):
             init_db()
             conn = get_connection()
             cursor = conn.cursor()
-            cursor.execute('SELECT id, title, description, due_date, status FROM tasks WHERE id = %s', (task_id,))
+            cursor.execute('SELECT id, title, description, due_date, status, category, priority FROM tasks WHERE id = %s', (task_id,))
         else:
             conn.close()
             raise
@@ -35,7 +35,7 @@ def get_a_task(task_id):
     if not row:
         conn.close()
         return None
-    task = Task(row[1], row[2], row[3], row[4])
+    task = Task(row[1], row[2], row[3], row[4], row[5], row[6])
     task.id = row[0]
     conn.close()
     return task

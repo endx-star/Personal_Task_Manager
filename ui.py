@@ -48,13 +48,25 @@ class TaskManagerApp:
         date_entry = tk.Entry(add_window)
         date_entry.pack()
 
+        tk.Label(add_window, text="Category:").pack()
+        category_entry = tk.Entry(add_window)
+        category_entry.insert(0, "General")
+        category_entry.pack()
+
+        tk.Label(add_window, text="Priority:").pack()
+        priority_entry = tk.Entry(add_window)
+        priority_entry.insert(0, "Normal")
+        priority_entry.pack()
+
         def submit():
             """Add the task to the database and refresh the task list."""
             title = title_entry.get()
             description = desc_entry.get()
             due_date = date_entry.get()
+            category = category_entry.get() or "General"
+            priority = priority_entry.get() or "Normal"
             if title and description and due_date:
-                add_task(title, description, due_date)
+                add_task(title, description, due_date, category=category, priority=priority)
                 messagebox.showinfo("Success", "Task added successfully!")
                 add_window.destroy()
                 self.tasks = view_tasks()  # Refresh task list
@@ -74,7 +86,7 @@ class TaskManagerApp:
             return
 
         for task in self.tasks:
-            task_label = tk.Label(view_window, text=f"ID: {task.id} - {task.title} ({task.status})")
+            task_label = tk.Label(view_window, text=f"ID: {task.id} - {task.title} ({task.status}) | {task.category} / {task.priority}")
             task_label.pack(anchor="w")
 
     def view_task_by_id_window(self):
@@ -135,6 +147,14 @@ class TaskManagerApp:
         status_entry = tk.Entry(update_window)
         status_entry.pack()
 
+        tk.Label(update_window, text="New Category:").pack()
+        category_entry = tk.Entry(update_window)
+        category_entry.pack()
+
+        tk.Label(update_window, text="New Priority:").pack()
+        priority_entry = tk.Entry(update_window)
+        priority_entry.pack()
+
         def submit():
             """Update the selected task in the database."""
             task_id = task_var.get().split(".")[0]
@@ -142,7 +162,9 @@ class TaskManagerApp:
             description = desc_entry.get() or None
             due_date = date_entry.get() or None
             status = status_entry.get() or None
-            update_task(task_id, title, description, due_date, status)
+            category = category_entry.get() or None
+            priority = priority_entry.get() or None
+            update_task(task_id, title, description, due_date, status, category, priority)
             messagebox.showinfo("Success", "Task updated successfully!")
             update_window.destroy()
             self.tasks = view_tasks()  # Refresh task list
