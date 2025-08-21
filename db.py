@@ -2,12 +2,8 @@ import os
 from pathlib import Path
 
 import psycopg2
-from psycopg2 import sql
-try:
-    from psycopg2.errors import UndefinedTable
-except Exception:
-    UndefinedTable = None
-from task import Task
+
+
 
 # Load environment variables from a local .env file in this directory
 try:
@@ -62,73 +58,6 @@ def init_db():
     conn.commit()
     conn.close()
 
-def add_task_to_db(title, description, due_date, status="Pending"):
-    """Add a new task to the database."""
-    conn = get_connection()
-    cursor = conn.cursor()
-    cursor.execute('''
-        INSERT INTO tasks (title, description, due_date, status)
-        VALUES (%s, %s, %s, %s)
-    ''', (title, description, due_date, status))
-    conn.commit()
-    conn.close()
 
-def get_all_tasks():
-    """Fetch all tasks from the database and return as Task objects."""
-    conn = get_connection()
-    cursor = conn.cursor()
-    try:
-        cursor.execute('SELECT id, title, description, due_date, status FROM tasks')
-    except Exception as exc:
-        # If table doesn't exist yet, create it and retry once
-        if (UndefinedTable is not None and isinstance(exc, UndefinedTable)) or (
-            getattr(exc, "__class__", None) and exc.__class__.__name__ == "UndefinedTable"
-        ):
-            conn.close()
-            init_db()
-            conn = get_connection()
-            cursor = conn.cursor()
-            cursor.execute('SELECT id, title, description, due_date, status FROM tasks')
-        else:
-            conn.close()
-            raise
-    tasks = []
-    for row in cursor.fetchall():
-        task = Task(row[1], row[2], row[3], row[4])
-        task.id = row[0]  # Set the task ID
-        tasks.append(task)
-    conn.close()
-    return tasks
 
-def update_task_in_db(task_id, title=None, description=None, due_date=None, status=None):
-    """Update a task in the database by ID."""
-    conn = get_connection()
-    cursor = conn.cursor()
-    updates = []
-    params = []
-    if title:
-        updates.append("title = %s")
-        params.append(title)
-    if description:
-        updates.append("description = %s")
-        params.append(description)
-    if due_date:
-        updates.append("due_date = %s")
-        params.append(due_date)
-    if status:
-        updates.append("status = %s")
-        params.append(status)
-    if updates:
-        set_clause = ", ".join(updates)
-        params.append(task_id)
-        cursor.execute(f"UPDATE tasks SET {set_clause} WHERE id = %s", params)
-        conn.commit()
-    conn.close()
 
-def delete_task_from_db(task_id):
-    """Delete a task from the database by ID."""
-    conn = get_connection()
-    cursor = conn.cursor()
-    cursor.execute('DELETE FROM tasks WHERE id = %s', (task_id,))
-    conn.commit()
-    conn.close()
